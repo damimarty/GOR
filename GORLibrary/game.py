@@ -1,6 +1,4 @@
 
-import pygame
-from pygame.locals import *
 from random import random
 from time import time
 from GORLibrary import environnement

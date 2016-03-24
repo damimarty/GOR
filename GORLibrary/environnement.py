@@ -1,5 +1,4 @@
 
-import pygame
 import math
 from colors import *
 from sensors import *

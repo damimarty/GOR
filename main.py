@@ -1,11 +1,12 @@
-#! /opt/local/bin/python2.7
+#! /usr/bin/python2.7
+###! /opt/local/bin/python2.7
 # -*- coding: utf-8 -*-
 
 import pickle
 from time import time
 from GORLibrary	import game,colors
-from GORLibrary import display as GORDisplay
-from neat import nn, population, statistics, visualize
+#from GORLibrary import display as GORDisplay
+from neat import nn, population, statistics, visualize, parallel
 
 maxLightDist = 1000
 
@@ -51,7 +52,7 @@ class nnPlayer(player):
 
 		if self.renderer:
 			self.renderer.drawText(colors.YELLOW,( k + 10 , 10),"%f"%(life))
-
+		#print(len(flatInput))
 		#print(flatInput)
 		output = self.net.serial_activate(flatInput)
 		#print(output)
@@ -121,18 +122,18 @@ game = game.GOR(740,580,10,None,renderer)
 game.addRobot(20,200)
 game.addFood()
 
-def evalFitness(genomes):
+def evalFitness(g):
 	global game
 	global renderer
-	for g in genomes:
-		p = nnPlayer(g,renderer)
-		game.setPlayer(p)
-		g.fitness = game.run()
-		print(g.fitness)
+	p = nnPlayer(g,renderer)
+	game.setPlayer(p)
+	g.fitness = game.run()
+	print(g.fitness)
 
 # The population stuff
 pop = population.Population('GorNnConfig')
-pop.run(evalFitness, 300)
+pe = parallel.ParallelEvaluator(24, evalFitness)
+pop.run(pe.evaluate, 300)
 
 # Save the winner.
 print('Number of evaluations: {0:d}'.format(pop.total_evaluations))
