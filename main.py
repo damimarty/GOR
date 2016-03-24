@@ -115,8 +115,7 @@ class humanPlayer(player):
 
 def parallelEvalFitness(g):
 	global game
-	global renderer
-	p = nnPlayer(g,renderer)
+	p = nnPlayer(g,None)
 	game.setPlayer(p)
 	g.fitness = game.run()
 	print(g.fitness)
