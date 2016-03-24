@@ -131,13 +131,13 @@ def evalFitness(gs):
 		print(g.fitness)
 
 pop = None
-parallel = raw_input("Parallel Evaluation? (y/n) ")
-if parallel == 'y':
+parallelExec = raw_input("Parallel Evaluation? (y/n) ")
+if parallelExec == 'y':
 	print("Go for Threading stuffs")
 	nThread = int(raw_input("N Threads? "))
 	# The population stuff
 	pop = population.Population('GorNnConfig')
-	pe = parallel.ParallelEvaluator(nThread, evalFitness)
+	pe = parallel.ParallelEvaluator(nThread, parallelEvalFitness)
 	pop.run(pe.evaluate, 300)
 
 else:
