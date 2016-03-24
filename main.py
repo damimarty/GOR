@@ -1,5 +1,3 @@
-#! /usr/bin/python2.7
-###! /opt/local/bin/python2.7
 # -*- coding: utf-8 -*-
 
 import pickle
@@ -115,14 +113,7 @@ class humanPlayer(player):
 
 		return (self.di,self.da,nPl,run)
 
-
-#renderer = GORDisplay.pygameRenderer()
-renderer = None
-game = game.GOR(740,580,10,None,renderer)
-game.addRobot(20,200)
-game.addFood()
-
-def evalFitness(g):
+def parallelEvalFitness(g):
 	global game
 	global renderer
 	p = nnPlayer(g,renderer)
@@ -130,10 +121,39 @@ def evalFitness(g):
 	g.fitness = game.run()
 	print(g.fitness)
 
-# The population stuff
-pop = population.Population('GorNnConfig')
-pe = parallel.ParallelEvaluator(24, evalFitness)
-pop.run(pe.evaluate, 300)
+def evalFitness(gs):
+	global game 
+	global renderer
+	for g in gs:
+		p = nnPlayer(g,renderer)
+		game.setPlayer(p)
+		g.fitness = game.run()
+		print(g.fitness)
+
+pop = None
+parallel = raw_input("Parallel Evaluation? (y/n) ")
+if parallel == 'y':
+	print("Go for Threading stuffs")
+	nThread = int(raw_input("N Threads? "))
+	# The population stuff
+	pop = population.Population('GorNnConfig')
+	pe = parallel.ParallelEvaluator(nThread, evalFitness)
+	pop.run(pe.evaluate, 300)
+
+else:
+	print("Go for single Thread")
+	viz = raw_input("Visulisation (y/n) ")
+	renderer = None
+	if viz == 'y':
+		from GORLibrary import display as GORDisplay
+		renderer = GORDisplay.pygameRenderer()
+	game = game.GOR(740,580,10,None,renderer)
+	game.addRobot(20,200)
+	game.addFood()
+
+	pop = population.Population('GorNnConfig')
+	pop.run(evalFitness, 300)
+
 
 # Save the winner.
 print('Number of evaluations: {0:d}'.format(pop.total_evaluations))
@@ -148,17 +168,4 @@ visualize.plot_stats(pop, ylog=True, filename="nn_fitness.svg")
 # Visualizes speciation
 visualize.plot_species(pop, filename="nn_speciation.svg")
 
-# The game stuffs 
-#player = human()
-
 print("done")
-"""
-
-game = game.GOR(740,580,10,None)
-game.setPlayer(humanPlayer())
-r = game.addRobot(20,10)
-(a,r) = r.getEyeParameters()
-print(a,r,int(a*r))
-game.addFood()
-game.run()
-"""
