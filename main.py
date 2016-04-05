@@ -2,7 +2,8 @@
 
 import pickle
 from time import time
-from GORLibrary	import game,colors
+from GORLibrary	import game as GORGame
+from GORLibrary import colors
 #from GORLibrary import display as GORDisplay
 from neat import nn, population, statistics, visualize, parallel
 
@@ -114,7 +115,9 @@ class humanPlayer(player):
 		return (self.di,self.da,nPl,run)
 
 def parallelEvalFitness(g):
-	global game
+	game = GORGame.GOR(740,580,10,None,None)
+	game.addRobot(20,200)
+	game.addFood()
 	p = nnPlayer(g,None)
 	game.setPlayer(p)
 	g.fitness = game.run()
@@ -146,7 +149,7 @@ else:
 	if viz == 'y':
 		from GORLibrary import display as GORDisplay
 		renderer = GORDisplay.pygameRenderer()
-	game = game.GOR(740,580,10,None,renderer)
+	game = GORGame.GOR(740,580,10,None,renderer)
 	game.addRobot(20,200)
 	game.addFood()
 
