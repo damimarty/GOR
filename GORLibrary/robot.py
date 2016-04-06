@@ -83,7 +83,10 @@ class robot(object):
 		if(dist<=(self.bboxSize+obj.bboxSize)):
 			if obj.eatable:
 				print("miam")
-				self.lifeValue += 100
+				self.lifeValue += 300
+				if (self.lifeValue > 10000):
+					print "Robot too efficient has been killed by jealous crowd"
+					self.lifeValue = 0
 			else:
 				print("beurk")
 			return obj.eatable
